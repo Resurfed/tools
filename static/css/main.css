@@ -1,0 +1,15 @@
+body {
+    background-color: #222;
+    color: #aaa;
+}
+
+.dark {
+    background-color: #222;
+}
+
+#id_user_name {
+    color: white;
+}
+#id_password {
+    color: white;
+}

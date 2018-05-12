@@ -1,0 +1,14 @@
+body > .grid {
+    height: 10%;
+}
+/* MOVE THIS THING */
+/*
+.column {
+    max-width: 450px;
+}
+*/
+
+.bot {
+    padding-bottom: 15px;
+}
+

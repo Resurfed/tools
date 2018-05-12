@@ -1,0 +1,70 @@
+<div class="ui grid">
+    <div class="computer tablet only row">
+        <div class="ui fixed menu inverted navbar page grid">
+            <a href="{% url 'home:index' %}" class="brand item">ReSurfed</a>
+            <a href="" class="active item">Home</a>
+            <a class="ui dropdown item">Dropdown
+                <i class="dropdown icon"></i>
+                <div class="inverted menu">
+                    <div class="item">Action</div>
+                    <div class="item">Another action</div>
+                    <div class="item">Something else here</div>
+                    <div class="ui divider"></div>
+                    <div class="item">Seperated link</div>
+                    <div class="item">One more seperated link</div>
+                </div>
+            </a>
+
+            <div class="right menu">
+                {% if not user.is_authenticated %}
+                    <a id="login-button" class="item">Log In</a>
+                    <a href="" class="item">Sign Up</a>
+                {% else %}
+
+                    <div class="ui dropdown item">Hello {{ user.username }}
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a class="item" href="{% url 'account-profile' %}">Profile</a>
+                            <a class="item" href="{% url 'account-logout' %}">Sign out</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile only row">
+        <div class="ui fixed navbar menu">
+            <a href="" class="brand item">Project Name</a>
+            <div class="right menu open">
+                <a href="" class="menu item">
+                    <i class="content icon"></i>
+                </a>
+            </div>
+        </div>
+        <div class="ui vertical navbar menu">
+            <a href="" class="active item">Home</a>
+            <a href="" class="item">About</a>
+            <a href="" class="item">Contact</a>
+            <div class="ui item">
+                <div class="text">Dropdown</div>
+                <div class="menu">
+                    <a class="item">Action</a>
+                    <a class="item">Another action</a>
+                    <a class="item">Something else here</a>
+                    <a class="ui aider"></a>
+                    <a class="item">Seperated link</a>
+                    <a class="item">One more seperated link</a>
+                </div>
+            </div>
+            <div class="menu">
+                <a href="" class="item">Default</a>
+                <a href="" class="item">Static top</a>
+                <a href="" class="item">Fixed top</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'account/login-modal.html' %}
+

@@ -1,0 +1,63 @@
+
+<div class="ui tiny inverted modal">
+        <div class="ui middle aligned center aligned grid container dark">
+            <div class="column">
+                <h2 class="ui inverted header">
+                    <div class="content">
+                        Sign in to your account
+                    </div>
+                </h2>
+{#                <div class="row">#}
+{#                    <div class="column">#}
+{#                        <div class="ui error message">Warning! Best check yo self, you're not looking too good.</div>#}
+{#                    </div>#}
+{#                </div>#}
+               <form class="ui inverted form attached" method="POST" id="signin-form"
+                  action="{% url 'account:account-login' %}" novalidate>
+                <div class="ui inverted transparent stacked">
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="user icon"></i>
+                            {{ login_form.user_name }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="lock icon"></i>
+                            {{ login_form.password }}
+                        </div>
+                    </div>
+
+                    <div class="ui left aligned grid">
+                        <div class="column">
+                            <div class="field bot">
+                                <div class="pretty p-default p-smooth">
+                                    <input type="checkbox"
+                                           value="{{ login_form.remember_me.value }}"
+                                           name="{{ login_form.remember_me.name }}"
+                                           id="{{ login_form.remember_me.id_for_label }}"
+                                           tabindex="3"/>
+                                    <div class="state p-primary">
+                                        <label>{{ login_form.remember_me.help_text }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}"/>
+                    {% endif %}
+                    {% csrf_token %}
+                    <button type="submit" id="signin-button" class="ui inverted fluid large submit button">Login
+                    </button>
+                </div>
+
+                <div class="ui inverted error message">
+                </div>
+
+            </form>
+
+            </div>
+        </div>
+</div>
