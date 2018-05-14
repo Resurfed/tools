@@ -1078,3 +1078,11 @@
          Site Overrides
 *******************************/
 
+
+/*-------------------
+  Inverted loading
+--------------------*/
+
+.ui.inverted.loading.form:before {
+  background: rgba(52, 52, 52, 0.8);
+}

@@ -7,9 +7,17 @@ body {
     background-color: #222;
 }
 
-#id_user_name {
+#id_user_name,
+#id_password,
+#id_email,
+#id_register_user_name,
+#id_register_password,
+#id_register_confirm_password{
     color: white;
 }
-#id_password {
-    color: white;
+
+
+.loading {
+    color: black;
 }
+

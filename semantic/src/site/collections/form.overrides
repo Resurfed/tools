@@ -1,0 +1,10 @@
+/*******************************
+         Site Overrides
+*******************************/
+
+/*-------------------
+  Inverted loading
+--------------------*/
+.ui.inverted.loading.form:before  {
+  background: @invertedDimmerColor;
+}

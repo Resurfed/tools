@@ -1,0 +1,58 @@
+<div id="register-modal" class="ui tiny inverted modal">
+    <div class="ui middle aligned center aligned grid container dark">
+        <div class="column">
+            <h2 class="ui inverted header">
+                <div class="content">
+                    Register for an account
+                </div>
+            </h2>
+            <form class="ui inverted form attached" method="POST" id="register-form" novalidate>
+                <div class="ui inverted transparent stacked">
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="user icon"></i>
+                            {{ register_form.user_name }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="mail icon"></i>
+                            {{ register_form.email }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="lock icon"></i>
+                            {{ register_form.password }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="ui inverted transparent left icon input">
+                            <i class="lock icon"></i>
+                            {{ register_form.confirm_password }}
+                        </div>
+                    </div>
+
+                </div>
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                {% endif %}
+                {% csrf_token %}
+                <br>
+                    <button type="submit" id="register-button" class="ui inverted fluid large button" tabindex="5">Register
+                    </button>
+                <br>
+                    Already have an account? Click <a href="#" id="login_redirect"> here</a> to login
+
+                <div class="ui inverted error message">
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
