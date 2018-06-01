@@ -1,34 +1,76 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="{% static 'account/js/login.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 
-    <div class="ui inverted middle aligned center aligned grid">
+    <div class="ui middle aligned center aligned grid">
         <div class="column">
             <h2 class="ui inverted white image header">
                 <div class="content">
                     Log-in to your account
                 </div>
             </h2>
-            <form class="ui inverted large form">
+            <form class="ui large form">
                 <div class="">
                     <div class="field">
-                        <div class="ui inverted left icon input">
+                        <div class="ui left icon input">
                             <i class="user icon"></i>
-                            <input type="text" name="email" placeholder="E-mail address">
+                            {{ form.user_name }}
                         </div>
                     </div>
                     <div class="field">
-                        <div class="ui inverted left icon input">
+                        <div class="ui left icon input">
                             <i class="lock icon"></i>
-                            <input type="password" name="password" placeholder="Password">
+                            {{ form.password }}
                         </div>
                     </div>
-                    <div class="ui fluid large blue submit button">Login</div>
+
+                    <div class="ui left aligned grid">
+                        <div class="column">
+                            <div class="field bot">
+                                <div class="pretty p-default p-smooth p-pulse">
+                                    <input type="checkbox"
+                                           value="{{ form.remember_me.value }}"
+                                           name="{{ form.remember_me.name }}"
+                                           id="{{ form.remember_me.id_for_label }}"
+                                           tabindex="3"/>
+                                    <div class="state p-primary">
+                                        <label>{{ form.remember_me.help_text }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}"/>
+                    {% endif %}
+
+                    {% csrf_token %}
+
+                    <div class="ui fluid large blue submit button" tabindex="4">Login</div>
+
                 </div>
 
                 <div class="ui error message"></div>
 
             </form>
+            <div class="ui bold inverted horizontal divider">
+                &nbsp;
+            </div>
+            <div class="ui left aligned grid">
+                <div class="column">
+                    <div class="ui blue message">
+                         If you forgot your password <a href="{% url 'account:forget-password' %}">Click Me!</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

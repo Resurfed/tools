@@ -1,11 +1,6 @@
 $(document).ready(function () {
 
     // semantic API stuff
-    $.fn.api.settings.api = {
-        'login': '/account/login/',
-        'register': '/account/register/',
-        'send-reset-email': '/account/send-reset-password/'
-    };
 
     $.fn.api.settings.successTest = function (response) {
         console.log(response);
@@ -22,7 +17,7 @@ $(document).ready(function () {
     });
 
     $('#login_redirect').click(function () {
-        $('#login-modal')
+        $('#account-modal')
             .modal('show')
         ;
     });
@@ -33,7 +28,7 @@ $(document).ready(function () {
         ;
     });
 
-    $('.message .close').on('click', function() { $(this).parent().hide(); });
+
 
     $('#signin-form')
         .form({

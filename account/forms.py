@@ -1,5 +1,5 @@
 from django import forms
-from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from .validators import alphanumeric
 from .models import User
@@ -60,7 +60,7 @@ class RegisterForm(forms.Form):
 
     user_name = forms.CharField(
         max_length=30,
-        required=False,
+        required=True,
         validators=[alphanumeric],
         widget=forms.TextInput(
             attrs={
@@ -70,8 +70,6 @@ class RegisterForm(forms.Form):
             }
         )
     )
-
-    set_field_html_name(user_name, 'register_user_name')
 
     email = forms.EmailField(
         max_length=50,
@@ -86,24 +84,20 @@ class RegisterForm(forms.Form):
 
     password = forms.CharField(
         max_length=64,
-        required=False,
+        required=True,
         widget=forms.PasswordInput(
             attrs={
-                'id': 'id_register_password',
                 'placeholder': 'Password',
                 'tabindex': 3
             }
         )
     )
 
-    set_field_html_name(password, 'register_password')
-
     confirm_password = forms.CharField(
         max_length=64,
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'id': 'id_register_confirm_password',
                 'placeholder': 'Confirm Password',
                 'tabindex': 4
             }
@@ -112,42 +106,27 @@ class RegisterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(RegisterForm, self).clean()
+        username = self.cleaned_data.get("user_name")
+        email = self.cleaned_data.get("email")
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
+        try:
+            User.objects.get(username=username)
+            self.add_error('user_name', 'This username is already taken')
+        except User.DoesNotExist:
+            pass
+
+        try:
+            User.objects.get(email=email)
+            self.add_error('email', 'This email is already taken')
+        except User.DoesNotExist:
+            pass
+
         if password != confirm_password:
             self.add_error('confirm_password', 'Passwords do not match')
+
         return self.cleaned_data
-
-    def clean_password(self):
-        data = self.data['register_password']
-        if data is None:
-            raise ValidationError('Missing password')
-        return data
-
-    def clean_user_name(self):
-        data = self.data['register_user_name']
-        if data is None:
-            raise ValidationError('Missing user name')
-
-        try:
-            User.objects.get(username=data)
-        except User.DoesNotExist:
-            return data
-
-        raise ValidationError("This username is already taken")
-
-    def clean_email(self):
-        data = self.data['email']
-        if data is None:
-            raise ValidationError('Missing email address')
-
-        try:
-            User.objects.get(email=data)
-        except User.DoesNotExist:
-            return data
-
-        raise ValidationError("This email address is already taken")
 
     class Meta:
         model = User
@@ -156,31 +135,78 @@ class RegisterForm(forms.Form):
 
 class SendResetPasswordForm(forms.Form):
 
+    user_name = forms.CharField(
+        max_length=30,
+        required=True,
+        validators=[alphanumeric],
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Username',
+                'tabindex': 1
+            }
+        )
+    )
+
     email = forms.EmailField(
         max_length=50,
-        required=False,
+        required=True,
         widget=forms.EmailInput(
             attrs={
-                'id': 'id_send_reset_password_email',
                 'placeholder': 'Email Address',
                 'tabindex': 1
             }
         )
     )
 
-    set_field_html_name(email, 'reset_password_email')
-
     def clean(self):
+        email = self.cleaned_data.get('email')
+        user_name = self.cleaned_data.get('user_name')
+
+        if not User.objects.filter(email=email, username=user_name).exists():
+            self.add_error('username', "Could not find an account matching this username and email.")
+
         return self.cleaned_data
 
-    def clean_email(self):
-        data = self.data['reset_password_email']
-        if data is None:
-            raise ValidationError('Missing email')
+    class Meta:
+        fields = {'username', 'email'}
 
-        if not User.objects.filter(email=data).exists():
-            raise ValidationError('This email address does not match any accounts on record')
-        return data
+
+class ResetPasswordForm(forms.Form):
+
+    code = forms.UUIDField(
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Reset code',
+                'tabindex': 1
+            }
+        )
+    )
+
+    password = forms.CharField(
+        max_length=64,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': 'New Password',
+                'tabindex': 3
+            }
+        )
+    )
+
+    confirm_password = forms.CharField(
+        max_length=64,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': 'Confirm New Password',
+                'tabindex': 4
+            }
+        )
+    )
+
+    def __init__(self, code):
+        super().__init__()
+        self.fields['code'].initial = mark_safe(code)
 
     class Meta:
-        fields = {'email'}
+        fields = ('code', 'password', 'confirm_password')

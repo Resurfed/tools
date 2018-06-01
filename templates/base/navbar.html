@@ -10,13 +10,13 @@
 
             <div class="right menu">
                 {% if not user.is_authenticated %}
-                    <a id="show-login" class="item">Log In</a>
-                    <a id="show-register" class="item">Register</a>
+                    <a href="{% url 'account:login' %}" class="item">Log In</a>
+                    <a href="{% url 'account:register' %}" class="item">Register</a>
                 {% else %}
 
-                    <div class="ui inverted dropdown item">Hello {{ user.username }}
+                    <div class="ui dropdown item">Hello {{ user.username }}
                         <i class="dropdown icon"></i>
-                        <div class="inverted menu">
+                        <div class="menu">
                             <a class="item" href="{% url 'account:profile' %}">Profile</a>
                             <a class="item" href="{% url 'account:logout' %}">Sign out</a>
                         </div>
@@ -26,9 +26,3 @@
         </div>
     </div>
 </div>
-
- {% if not user.is_authenticated %}
-    {% include 'account/login-modal.html' %}
-    {% include 'account/register-modal.html' %}
-    {% include 'account/forget-password-modal.html' %}
-{% endif %}

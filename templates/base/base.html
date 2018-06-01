@@ -7,9 +7,11 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
         <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
         <script src="{% static 'js/jquery.serialize-object.min.js' %}"></script>
+
+        <script src="{% static 'js/api.js' %}"></script>
+        <script src="{% static 'js/global.js' %}"></script>
 
         <link rel="stylesheet" href="{% static 'semantic/semantic.min.css' %}"/>
         <script src="{% static 'semantic/semantic.min.js' %}"></script>
@@ -18,7 +20,6 @@
         <script src="{% static 'navbar/js/navbar.js' %}"></script>
 
         {# Can maybe check for authentication to not load it #}
-        <script src="{% static 'navbar/js/login-register.js' %}"></script>
 
         <link href="{% static 'css/pretty-checkbox.min.css' %}" media="all"
               rel="stylesheet" type="text/css"/>

@@ -3,10 +3,11 @@ import json
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
-from .forms import RegisterForm, LoginForm, SendResetPasswordForm
+from .forms import RegisterForm, LoginForm, SendResetPasswordForm, ResetPasswordForm
 from .models import User, ResetEmail
 import requests
 from django.db.utils import IntegrityError
+
 # Create your views here.
 '''
 
@@ -55,10 +56,15 @@ def login_user(request):
             return HttpResponse(json.dumps({"success": False, "errors": errors}),
                                 content_type='application/json', status=404)
 
-    return render(request, 'account/login.html')
+    return render(request, 'account/login.html', {
+        'form': LoginForm()
+    })
 
 
 def register_user(request):
+    if request.user.is_authenticated:
+        return redirect('home:index')
+
     if request.method == 'POST':
         form = RegisterForm(request.POST)
 
@@ -74,13 +80,14 @@ def register_user(request):
         else:
             errors = []
             for item in form.errors:
-                errors = [err for err in form.errors[item]]
+                errors += [err for err in form.errors[item]]
 
             return HttpResponse(json.dumps({"success": False, "errors": errors}),
                                 content_type='application/json', status=404)
 
-    return HttpResponse(json.dumps({"success": True, "redirect": reverse('home:index')}),
-                        content_type='application/json', status=200)
+    return render(request, 'account/register.html', {
+        'form': RegisterForm()
+    })
 
 
 def logout_user(request):
@@ -89,7 +96,7 @@ def logout_user(request):
     return redirect('home:index')
 
 
-def send_reset_password(request):
+def forget_password(request):
     if request.method == 'POST':
         form = SendResetPasswordForm(request.POST)
 
@@ -132,16 +139,16 @@ def send_reset_password(request):
             return HttpResponse(json.dumps({"success": False, "errors": errors}),
                                 content_type='application/json', status=404)
 
+    return render(request, 'account/forget-password.html', {
+        'form': SendResetPasswordForm()
+    })
+
 
 def reset_password(request, code):
-    login_form = LoginForm()
-    register_form = RegisterForm()
-    send_reset_form = SendResetPasswordForm()
 
     return render(request, 'account/reset-password.html', {
-        "login_form": login_form,
-        "register_form": register_form,
-        "send_reset_form": send_reset_form
+        'form': ResetPasswordForm(code=code),
+        'code': code
     })
 
 

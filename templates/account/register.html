@@ -3,7 +3,7 @@
 
 {% block head %}
     {{ block.super }}
-    <script src="{% static 'account/js/reset.js' %}"></script>
+    <script src="{% static 'account/js/register.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -12,16 +12,21 @@
         <div class="column">
             <h2 class="ui inverted white image header">
                 <div class="content">
-                    Reset password
+                    Register for an account
                 </div>
             </h2>
             <form class="ui large form">
                 <div class="">
-
                     <div class="field">
                         <div class="ui left icon input">
-                            <i class="lock icon"></i>
-                            {{ form.code }}
+                            <i class="user icon"></i>
+                            {{ form.user_name }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="mail icon"></i>
+                            {{ form.email }}
                         </div>
                     </div>
 
@@ -39,19 +44,19 @@
                         </div>
                     </div>
 
-                        {% csrf_token %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}"/>
+                    {% endif %}
 
-                        <div class="ui fluid large blue submit button">Reset password</div>
-                    </div>
-                    <div class="ui error message"></div>
-            </form>
-            <div class="ui positive message hidden">
-                <i class="close icon"></i>
-                <div class="header">
-                    Successfully sent email
+                    {% csrf_token %}
+
+                    <div class="ui fluid large blue submit button">Login</div>
+
                 </div>
-                <p>Please check your email for the reset password link</p>
-            </div>
+
+                <div class="ui error message"></div>
+
+            </form>
         </div>
     </div>
 

@@ -1,12 +1,13 @@
 body {
-    background: linear-gradient(3deg, #02926d, #4a64f0, #2b2e3a);
+    background: linear-gradient(31deg, #04a57b, #2f38ae, #474250);
     background-size: 600% 600%;
 
-    -webkit-animation: AnimationName 43s ease infinite;
-    -moz-animation: AnimationName 43s ease infinite;
-    animation: AnimationName 43s ease infinite;
-    color: #54c8ff;
+    -webkit-animation: AnimationName 39s ease infinite;
+    -moz-animation: AnimationName 39s ease infinite;
+    animation: AnimationName 39s ease infinite;
+    color: white;
 }
+
 
 @-webkit-keyframes AnimationName {
     0%{background-position:0% 63%}
@@ -24,7 +25,16 @@ body {
     100%{background-position:0% 63%}
 }
 
+
 /*
+
+    background: linear-gradient(3deg, #02926d, #4a64f0, #2b2e3a);
+    background-size: 600% 600%;
+
+    -webkit-animation: AnimationName 43s ease infinite;
+    -moz-animation: AnimationName 43s ease infinite;
+    animation: AnimationName 43s ease infinite;
+
     background: #8360c3;
     background: -webkit-linear-gradient(to right, #8360c3, #2ebf91);
     background: linear-gradient(to right, #8360c3, #2ebf91);
@@ -39,6 +49,10 @@ body {
 }
 
 .ui.menu .item {
+    color: white;
+}
+
+.ui.menu .active.item {
     color: white;
 }
 

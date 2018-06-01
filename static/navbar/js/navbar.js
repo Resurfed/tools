@@ -2,8 +2,8 @@ $(document).ready(function () {
 
     $('.ui.dropdown').dropdown();
 
-    $('#show-login').click(function(){
-        $('#login-modal')
+    $('#show-account').click(function(){
+        $('#account-modal')
             .modal('show')
         ;
     });
@@ -15,10 +15,10 @@ $(document).ready(function () {
     });
 
     if (window.location.href.includes("next")) {
-        $('#login-modal')
+        $('#account-modal')
             .modal('show')
         ;
-        $("#login-error-message").html("Please sign into your account to access this page!").show();
+        $("#account-error-message").html("Please sign into your account to access this page!").show();
     }
 });
 
