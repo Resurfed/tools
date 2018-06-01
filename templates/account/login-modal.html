@@ -1,13 +1,14 @@
 
+
 <div id="login-modal" class="ui tiny inverted modal">
-        <div class="ui middle aligned center aligned grid container dark">
-            <div class="column">
-                <h2 class="ui inverted header">
-                    <div class="content">
-                        Login to your account
-                    </div>
-                </h2>
-               <form class="ui inverted form attached" method="POST" id="signin-form" novalidate>
+    <div class="ui middle aligned center aligned grid container dark">
+        <div class="column">
+            <h2 class="ui inverted header">
+                <div class="content">
+                    Login to your account
+                </div>
+            </h2>
+            <form class="ui inverted form attached" method="POST" id="signin-form" novalidate>
                 <div class="ui inverted transparent stacked">
                     <div class="field">
                         <div class="ui inverted transparent left icon input">
@@ -45,13 +46,19 @@
                     {% csrf_token %}
                     <button type="submit" id="signin-button" class="ui inverted fluid large button" tabindex="4">Login
                     </button>
-                <br>
-                    Need an account? Click <a href="#" id="register_redirect"> here</a> to register.
                 </div>
 
-                <div class="ui inverted error message">
+                <div id="login-error-message" class="ui inverted error message">
                 </div>
+
+
             </form>
-            </div>
+                <div class="text left">
+                <br>
+                Need an account? Click <a href="#" id="register_redirect"> here</a> to register.
+                <br><br>
+                Forget your password? Click <a href="#" id="forget_password_redirect"> here</a> to reset it.
+                </div>
         </div>
+    </div>
 </div>

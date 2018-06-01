@@ -3,8 +3,8 @@ $(document).ready(function () {
     // semantic API stuff
     $.fn.api.settings.api = {
         'login': '/account/login/',
-        'register': '/account/register/'
-
+        'register': '/account/register/',
+        'send-reset-email': '/account/send-reset-password/'
     };
 
     $.fn.api.settings.successTest = function (response) {
@@ -27,6 +27,14 @@ $(document).ready(function () {
         ;
     });
 
+    $("#forget_password_redirect").click(function () {
+        $("#forget-password-modal")
+            .modal('show')
+        ;
+    });
+
+    $('.message .close').on('click', function() { $(this).parent().hide(); });
+
     $('#signin-form')
         .form({
             keyboardShortcuts: false,
@@ -43,7 +51,18 @@ $(document).ready(function () {
             window.location.replace(response.redirect);
         },
         onFailure: function (response) {
-            $(".ui.error.message").text(response.errors);
+
+            let errors = response.errors;
+
+            let list = '<ul class="list">';
+            for (let key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    list += '<li>' + errors[key] + '</li>'
+                }
+            }
+            list += '</ul>';
+
+            $(".ui.error.message").html(list);
         }
     });
 
@@ -106,14 +125,12 @@ $(document).ready(function () {
         },
         onFailure: function (response) {
 
-            let errors = response.errors[0];
+            let errors = response.errors;
 
             let list = '<ul class="list">';
             for (let key in errors) {
                 if (errors.hasOwnProperty(key)) {
-                    for (let x = 0; x < errors[key].length; x++) {
-                        list += '<li>' + errors[key][x] + '</li>'
-                    }
+                    list += '<li>' + errors[key] + '</li>'
                 }
             }
             list += '</ul>';
@@ -122,4 +139,38 @@ $(document).ready(function () {
             $(".ui.error.message").html(list);
         }
     });
+
+
+    $('#send-reset-password-form')
+        .form({
+            keyboardShortcuts: false,
+            fields: {
+                reset_password_email: ['empty', 'email']
+            }
+        }).api({
+        action: 'send-reset-email',
+        method: 'POST',
+        serializeForm: true,
+        onSuccess: function (response) {
+            // valid response and response.success = true
+            $("#id_sent_email_message").show();
+        },
+        onFailure: function (response) {
+
+            let errors = response.errors;
+
+            let list = '<ul class="list">';
+            for (let key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    list += '<li>' + errors[key] + '</li>'
+                }
+            }
+            list += '</ul>';
+
+
+            $(".ui.error.message").html(list);
+        }
+    });
+
+
 });

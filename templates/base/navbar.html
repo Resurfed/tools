@@ -1,14 +1,12 @@
+{% load is_active %}
 <div class="ui grid">
     <div class="computer tablet only row">
-        <div class="ui fixed menu inverted navbar grid">
+        <div class="ui fixed menu navbar grid">
             <a href="{% url 'home:index' %}" class="brand item">ReSurfed</a>
-            <a href="" class="active item">Home</a>
-            <a class="ui inverted dropdown item">Dropdown
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div class="item">Action</div>
-                </div>
-            </a>
+            <a href="{% url 'home:index' %}" class="{% is_active request 'home:index' %} item">Home</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'uploader:uploader' %}" class="{% is_active request 'uploader:uploader' %} item">Map Management</a>
+            {% endif %}
 
             <div class="right menu">
                 {% if not user.is_authenticated %}
@@ -29,6 +27,8 @@
     </div>
 </div>
 
-{% include 'account/login-modal.html' %}
-{% include 'account/register-modal.html' %}
-
+ {% if not user.is_authenticated %}
+    {% include 'account/login-modal.html' %}
+    {% include 'account/register-modal.html' %}
+    {% include 'account/forget-password-modal.html' %}
+{% endif %}

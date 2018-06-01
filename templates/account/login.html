@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+    <div class="ui inverted middle aligned center aligned grid">
+        <div class="column">
+            <h2 class="ui inverted white image header">
+                <div class="content">
+                    Log-in to your account
+                </div>
+            </h2>
+            <form class="ui inverted large form">
+                <div class="">
+                    <div class="field">
+                        <div class="ui inverted left icon input">
+                            <i class="user icon"></i>
+                            <input type="text" name="email" placeholder="E-mail address">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui inverted left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="ui fluid large blue submit button">Login</div>
+                </div>
+
+                <div class="ui error message"></div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

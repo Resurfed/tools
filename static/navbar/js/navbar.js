@@ -15,11 +15,10 @@ $(document).ready(function () {
     });
 
     if (window.location.href.includes("next")) {
-        $('.ui.modal')
+        $('#login-modal')
             .modal('show')
         ;
-        $(".ui.error.message").text("Please sign into your account to access this page!");
+        $("#login-error-message").html("Please sign into your account to access this page!").show();
     }
-
 });
 

@@ -66,7 +66,6 @@ class RegisterForm(forms.Form):
             attrs={
                 'id': 'id_register_user_name',
                 'placeholder': 'Username',
-                'class': 'form-control',
                 'tabindex': 1
             }
         )
@@ -80,7 +79,6 @@ class RegisterForm(forms.Form):
         widget=forms.EmailInput(
             attrs={
                 'placeholder': 'Email Address',
-                'class': 'form-control',
                 'tabindex': 2
             }
         )
@@ -93,7 +91,6 @@ class RegisterForm(forms.Form):
             attrs={
                 'id': 'id_register_password',
                 'placeholder': 'Password',
-                'class': 'form-control',
                 'tabindex': 3
             }
         )
@@ -108,7 +105,6 @@ class RegisterForm(forms.Form):
             attrs={
                 'id': 'id_register_confirm_password',
                 'placeholder': 'Confirm Password',
-                'class': 'form-control',
                 'tabindex': 4
             }
         )
@@ -144,7 +140,7 @@ class RegisterForm(forms.Form):
     def clean_email(self):
         data = self.data['email']
         if data is None:
-            raise ValidationError('Missing user name')
+            raise ValidationError('Missing email address')
 
         try:
             User.objects.get(email=data)
@@ -155,4 +151,36 @@ class RegisterForm(forms.Form):
 
     class Meta:
         model = User
-        fields = {'user_name', 'email', 'register_password', 'confirm_password'}
+        fields = {'user_name', 'email', 'password', 'confirm_password'}
+
+
+class SendResetPasswordForm(forms.Form):
+
+    email = forms.EmailField(
+        max_length=50,
+        required=False,
+        widget=forms.EmailInput(
+            attrs={
+                'id': 'id_send_reset_password_email',
+                'placeholder': 'Email Address',
+                'tabindex': 1
+            }
+        )
+    )
+
+    set_field_html_name(email, 'reset_password_email')
+
+    def clean(self):
+        return self.cleaned_data
+
+    def clean_email(self):
+        data = self.data['reset_password_email']
+        if data is None:
+            raise ValidationError('Missing email')
+
+        if not User.objects.filter(email=data).exists():
+            raise ValidationError('This email address does not match any accounts on record')
+        return data
+
+    class Meta:
+        fields = {'email'}

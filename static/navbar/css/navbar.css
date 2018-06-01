@@ -12,3 +12,6 @@ body > .grid {
     padding-bottom: 15px;
 }
 
+.text.left {
+    text-align: left;
+}

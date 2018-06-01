@@ -1,23 +1,72 @@
 body {
-    background-color: #222;
-    color: #aaa;
+    background: linear-gradient(3deg, #02926d, #4a64f0, #2b2e3a);
+    background-size: 600% 600%;
+
+    -webkit-animation: AnimationName 43s ease infinite;
+    -moz-animation: AnimationName 43s ease infinite;
+    animation: AnimationName 43s ease infinite;
+    color: #54c8ff;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 63%}
+    50%{background-position:100% 38%}
+    100%{background-position:0% 63%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 63%}
+    50%{background-position:100% 38%}
+    100%{background-position:0% 63%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 63%}
+    50%{background-position:100% 38%}
+    100%{background-position:0% 63%}
+}
+
+/*
+    background: #8360c3;
+    background: -webkit-linear-gradient(to right, #8360c3, #2ebf91);
+    background: linear-gradient(to right, #8360c3, #2ebf91);
+ */
+
+.ui.fixed.menu.navbar {
+    background-color: #3820eb;
+}
+
+.ui.fixed.menu.navbar.grid > a {
+    color:white;
+}
+
+.ui.menu .item {
+    color: white;
+}
+
+body > .middle.grid {
+    height: 50%;
 }
 
 .dark {
     background-color: #222;
 }
 
-#id_user_name,
-#id_password,
-#id_email,
-#id_register_user_name,
-#id_register_password,
-#id_register_confirm_password{
-    color: white;
+.column {
+    max-width: 450px;
 }
-
 
 .loading {
     color: black;
 }
 
+.ui.transparent.inverted.input > input {
+    color: #54c8ff;
+    opacity: 0.6;
+}
+
+.ui.transparent.inverted.input > input::-moz-placeholder {
+    color: #fff;
+}
+
+.ui.transparent.inverted.input > input:focus {
+    opacity: 0.8;
+}
