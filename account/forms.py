@@ -2,20 +2,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 from .validators import alphanumeric
-from .models import User
-
-
-def set_field_html_name(cls, new_name):
-    """
-    This creates wrapper around the normal widget rendering,
-    allowing for a custom field name (new_name).
-    """
-    old_render = cls.widget.render
-
-    def _widget_render_wrapper(name, value, attrs=None):
-        return old_render(new_name, value, attrs)
-
-    cls.widget.render = _widget_render_wrapper
+from .models import User, ResetPasswordToken
 
 
 class LoginForm(forms.Form):
@@ -105,7 +92,7 @@ class RegisterForm(forms.Form):
     )
 
     def clean(self):
-        cleaned_data = super(RegisterForm, self).clean()
+        cleaned_data = super().clean()
         username = self.cleaned_data.get("user_name")
         email = self.cleaned_data.get("email")
         password = cleaned_data.get("password")
@@ -173,10 +160,10 @@ class SendResetPasswordForm(forms.Form):
 
 class ResetPasswordForm(forms.Form):
 
-    code = forms.UUIDField(
+    token = forms.UUIDField(
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'Reset code',
+                'placeholder': 'Reset token',
                 'tabindex': 1
             }
         )
@@ -204,9 +191,27 @@ class ResetPasswordForm(forms.Form):
         )
     )
 
-    def __init__(self, code):
-        super().__init__()
-        self.fields['code'].initial = mark_safe(code)
+    def __init__(self, *args, **kwargs):
+        token = kwargs.pop('token', None)
+        super().__init__(*args, **kwargs)
+        if token is not None:
+            self.fields['token'].initial = mark_safe(token)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        token = cleaned_data.get('token')
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        try:
+            ResetPasswordToken.objects.get(token=token)
+        except ResetPasswordToken.DoesNotExist:
+            self.add_error('token', 'Invalid password reset code')
+
+        if password != confirm_password:
+            self.add_error('confirm_password', 'Passwords do not match')
+
+        return self.cleaned_data
 
     class Meta:
-        fields = ('code', 'password', 'confirm_password')
+        fields = ('token', 'password', 'confirm_password')

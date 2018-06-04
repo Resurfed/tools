@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^logout/', views.logout_user, name='logout'),
     url(r'^forget', views.forget_password, name='forget-password'),
     url(r'^view', views.account_profile, name='profile'),
-    path('reset/<uuid:code>/', views.reset_password),
+    path('reset/', views.reset_password, name='reset-password'),
+    path('reset/<uuid:token>/', views.reset_password, name='reset-password'),
 ]

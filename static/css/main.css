@@ -64,10 +64,6 @@ body > .middle.grid {
     background-color: #222;
 }
 
-.column {
-    max-width: 450px;
-}
-
 .loading {
     color: black;
 }

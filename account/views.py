@@ -4,9 +4,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
 from .forms import RegisterForm, LoginForm, SendResetPasswordForm, ResetPasswordForm
-from .models import User, ResetEmail
+from .models import User, ResetPasswordToken
+from .responses import ajax_response
 import requests
-from django.db.utils import IntegrityError
 
 # Create your views here.
 '''
@@ -42,19 +42,17 @@ def login_user(request):
 
                 if next_url is None:
                     next_url = reverse('home:index')
-                return HttpResponse(json.dumps({"success": True, 'redirect': next_url}),
-                                    content_type='application/json')
+
+                return ajax_response(True, redirect=next_url)
 
             else:
-                return HttpResponse(json.dumps({"success": False, "errors": ["Invalid username or password"]}),
-                                    content_type='application/json')
+                return ajax_response(False, 401, errors=["Invalid username or password"])
 
         else:
             errors = []
             for item in form.errors:
                 errors = [err for err in form.errors[item]]
-            return HttpResponse(json.dumps({"success": False, "errors": errors}),
-                                content_type='application/json', status=404)
+            return ajax_response(False, 400, errors=errors)
 
     return render(request, 'account/login.html', {
         'form': LoginForm()
@@ -82,8 +80,7 @@ def register_user(request):
             for item in form.errors:
                 errors += [err for err in form.errors[item]]
 
-            return HttpResponse(json.dumps({"success": False, "errors": errors}),
-                                content_type='application/json', status=404)
+            return ajax_response(False, 400, errors=errors)
 
     return render(request, 'account/register.html', {
         'form': RegisterForm()
@@ -97,6 +94,9 @@ def logout_user(request):
 
 
 def forget_password(request):
+    if request.user.is_authenticated:
+        return redirect('home:index')
+
     if request.method == 'POST':
         form = SendResetPasswordForm(request.POST)
 
@@ -105,18 +105,18 @@ def forget_password(request):
             email = form.cleaned_data.get('email')
 
             user = User.objects.filter(email=email).first()
-            reset = ResetEmail.objects.filter(user=user).first()
+            reset = ResetPasswordToken.objects.filter(user=user).first()
 
             if reset is not None:
                 reset.delete()
 
-            reset = ResetEmail()
+            reset = ResetPasswordToken()
             reset.user = user
             reset.save()
 
             key = 'PUT KEY HERE'
             request_url = 'https://api.mailgun.net/v3/mail.resurfed.com/messages'
-            reset_link = f"http://tools.resurfed.xyz/account/reset/{reset.code}"
+            reset_link = f"http://tools.resurfed.xyz/account/reset/{reset.token}/"
 
             request = requests.post(request_url, auth=('api', key), data={
                 'from': 'mail.resurfed.com',
@@ -126,29 +126,51 @@ def forget_password(request):
             })
 
             if request.status_code != 200:
-                return HttpResponse(json.dumps({"success": False, "errors": ['Unable to send email']}),
-                                    content_type='application/json', status=404)
+                return ajax_response(False, 400, errors=['Unable to send email'])
 
-            return HttpResponse(json.dumps({"success": True}),
-                                content_type='application/json')
+            return ajax_response(True)
         else:
             errors = []
             for item in form.errors:
                 errors = [err for err in form.errors[item]]
 
-            return HttpResponse(json.dumps({"success": False, "errors": errors}),
-                                content_type='application/json', status=404)
+            return ajax_response(False, 400, errors=errors)
 
     return render(request, 'account/forget-password.html', {
         'form': SendResetPasswordForm()
     })
 
 
-def reset_password(request, code):
+def reset_password(request, token=None):
+    if request.user.is_authenticated:
+        return redirect('home:index')
+
+    if request.method == 'POST':
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            token = form.cleaned_data.get('token')
+            password = form.cleaned_data.get('password')
+
+            reset = ResetPasswordToken.objects.get(token=token)
+
+            if reset.is_expired():
+                return ajax_response(False, 401, errors=['Expired reset token'])
+
+            reset.delete()
+            reset.user.set_password(password)
+            reset.user.save()
+
+            return ajax_response(True)
+
+        else:
+            errors = []
+            for item in form.errors:
+                errors = [err for err in form.errors[item]]
+
+            return ajax_response(False, 400, errors=errors)
 
     return render(request, 'account/reset-password.html', {
-        'form': ResetPasswordForm(code=code),
-        'code': code
+        'form': ResetPasswordForm(token=token)
     })
 
 
