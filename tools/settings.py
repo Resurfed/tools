@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'account',
-    'home'
+    'home',
+    'uploader'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,18 @@ STATICFILES_DIRS = (
 AUTH_USER_MODEL = 'account.User'
 
 LOGIN_URL = '/'
+
+LIVE_MAP_URLS = ['https://files.resurfed.com/maplists/elite.txt', 'https://files.resurfed.com/maplists/bhop.txt']
+
+ASGI_APPLICATION = "tools.routing.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://tools-dev:6ff5c092593fad69a5d8b505e55be2dad42e972955e7ba4ddf3d40832844e4de@apps.resurfed.xyz:31355"],
+        },
+    },
+}
+
+CELERY_BROKER_URL = "redis://tools-dev:6ff5c092593fad69a5d8b505e55be2dad42e972955e7ba4ddf3d40832844e4de@apps.resurfed.xyz:31355"

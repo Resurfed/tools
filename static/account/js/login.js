@@ -5,7 +5,7 @@ $(document).ready(function () {
             fields: {
                 user_name: 'empty',
                 password: ['empty', 'minLength[6]', 'maxLength[32]']
-            }
+            },
         }).api({
         action: 'login',
         method: 'POST',

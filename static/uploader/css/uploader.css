@@ -1,0 +1,12 @@
+.form-border {
+    border: 1px solid;
+    padding: 10px;
+}
+
+.fill {
+    width: 100%;
+}
+
+.shade {
+    background-color: rgba(220, 209, 255, 0.2);
+}

@@ -15,4 +15,23 @@ $(document).ready(function () {
         return false;
     };
 
+    $.fn.form.settings.rules.spawns = function (value) {
+
+        if (value.length === 0)
+            return true;
+
+        let pattern = /^(map::-?\d+,-?\d+,-?\d+:-?\d+,-?\d+,-?\d+|(stage|bonus):([1-9]\d*):-?\d+,-?\d+,-?\d+:-?\d+,-?\d+,-?\d+)$/;
+        let lines = value.split("\n");
+        let ret_value = true;
+
+        $.each(lines, function (i) {
+            if (!pattern.test(lines[i])) {
+                ret_value = false;
+                return false;
+            }
+        });
+
+        return ret_value;
+    };
+
 });

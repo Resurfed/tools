@@ -1,19 +1,150 @@
 {% extends 'base/base.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block head %}
+    {{ block.super }}
+
+    <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
+    <script src="{% static 'uploader/js/uploader.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'uploader/css/uploader.css' %}"/>
+    <link rel="stylesheet" href="{% static 'uploader/css/file-input.css' %}"/>
+
+{% endblock %}
+
 {% block content %}
-    <div class="ui page grid">
-        <div class="one column row">
-            <div class="column">
-                <h2 class="ui header">Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.</p>
-                <button class="ui tiny button m-top-10">View details &raquo;</button>
+    <form class="ui inverted form loading" style="padding:30px">
+        <div class="ui page grid">
+            <div class="two column row shade">
+                <div class="column">
+                    <h2>Map Information</h2>
+                    <br>
+                    <div class="field">
+                        <div class="pretty p-default p-smooth">
+                            <input type="checkbox"
+                                   value="{{ form.insert_map_info.value }}"
+                                   name="{{ form.insert_map_info.name }}"
+                                   id="{{ form.insert_map_info.id_for_label }}"
+                                   tabindex="1"/>
+                            <div class="state p-primary">
+                                <label class="">Add Map Information</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="map_info" class="row">
+                        <div class="field">
+                            <label>{{ form.map_author.help_text }}</label>
+                            {{ form.map_author }}
+                        </div>
+
+                        <div class="field">
+                            <label> {{ form.map_type.help_text }}</label>
+                            <div class="ui selection dropdown disabled">
+                                <input type="hidden" id="{{ form.map_type.id_for_label }}"
+                                       name="{{ form.map_type.html_name }}">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Map Type</div>
+                                <div class="menu">
+                                    {% for val, text in form.fields.map_type.choices %}
+                                        <div class="item" data-value="{{ val }}">{{ text }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="field">
+                            <label> {{ form.map_tier.help_text }}</label>
+                            {{ form.map_tier }}
+                        </div>
+
+                        <div class="field">
+                            <label> {{ form.map_zones.help_text }}</label>
+                            {{ form.map_zones }}
+                        </div>
+
+                        <div class="field">
+                            <label> {{ form.map_bonuses.help_text }}</label>
+                            {{ form.map_bonuses }}
+                        </div>
+
+                        <div class="field">
+                            <div class="pretty p-default p-smooth row-m-t">
+                                <input type="checkbox"
+                                       value="{{ form.map_disable_pre_hop.value }}"
+                                       name="{{ form.map_disable_pre_hop.name }}"
+                                       id="{{ form.map_disable_pre_hop.id_for_label }}"
+                                       tabindex="7" disabled/>
+                                <div class="state p-primary">
+                                    <label class="hide-text">{{ form.map_disable_pre_hop.help_text }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="pretty p-default p-smooth row-m-t">
+                                <input type="checkbox"
+                                       value="{{ form.map_enable_baked_triggers.value }}"
+                                       name="{{ form.map_enable_baked_triggers.name }}"
+                                       id="{{ form.map_enable_baked_triggers.id_for_label }}"
+                                       tabindex="8" disabled/>
+                                <div class="state p-primary">
+                                    <label class="hide-text">{{ form.map_enable_baked_triggers.help_text }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label> Spawn Info</label>
+                            {{ form.map_spawns }}
+                            <div class="help-block text-muted">
+                                {{ form.map_spawns.help_text }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column">
+                    <h2>Upload Settings</h2>
+                    <br><br>
+                    <div class="field" style="margin-top: 8px">
+                        <label> {{ form.servers.help_text }}</label>
+                        {{ form.servers }}
+                    </div>
+
+                    <div class="field">
+                        <div class="box">
+                            <input type="file" name="map_file" id="id_map_file" class="inputfile" size="999"
+                                                   accept=".bsp"/>
+                            <label for="id_map_file">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17">
+                                    <path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/>
+                                </svg>
+                                <span>Choose your map&hellip;</span></label>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <button type="submit" class="ui blue submit button block fill">Upload</button>
+                    <br>
+                    <br>
+                    <div class="ui active blue progress" id="pbMain">
+                        <div class="bar">
+                            <div class="centered progress"></div>
+                        </div>
+                    </div>
+                    <div class="ui inverted error message" style="background-color:rgba(0, 0, 0, 0.1);"></div>
+                    <div class="ui inverted message" style="background-color:rgba(0, 0, 0, 0.1);">
+                        <div class="ui center aligned inverted header">
+                            Message Log
+                        </div>
+                        <div class="ui bulleted list">
+
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
-        <div class="row">
-            <div class="column">
-                <div class="ui divider"></div>
-                <span>&copy; Company 2014</span>
-            </div>
-        </div>
-    </div>
+    </form>
 {% endblock %}
