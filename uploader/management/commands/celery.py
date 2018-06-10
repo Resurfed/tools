@@ -6,7 +6,7 @@ from django.utils import autoreload
 
 
 def restart_celery():
-    cmd = 'taskkill /IM celery.exe /F'
+    cmd = 'pkill -9 celery'
     subprocess.call(shlex.split(cmd))
     cmd = 'celery worker -l info -A tools'
     subprocess.call(shlex.split(cmd))

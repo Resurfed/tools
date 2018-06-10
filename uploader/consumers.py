@@ -21,7 +21,7 @@ class UploadConsumer(JsonWebsocketConsumer):
     def receive_json(self, content, **kwargs):
         pass
 
-    def send_thing(self, message):
+    def send_message(self, message):
         message.pop('type')
         self.send(text_data=json.dumps(message))
 

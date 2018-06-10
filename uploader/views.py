@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .forms import UploadForm
 from .helpers import handle_uploaded_file, USER_CHANNEL_NAME
-from .tasks import upload_map
+from .tasks import process_map
 import json
+import time
 # Create your views here.
 
 
@@ -35,8 +36,8 @@ def uploader(request):
 
             servers = [server.id for server in form.cleaned_data.get('servers')]
             channel_name = USER_CHANNEL_NAME.get(request.user.id)
-            task = upload_map.delay(channel_name, temp_file, servers)
-            print(f"We ran {task.id}")
+            process_map(channel_name, temp_file, servers, request.user.username)
+            #print(f"We ran {task.id}")
 
 
 

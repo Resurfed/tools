@@ -28,12 +28,14 @@ MapTypeChoices = (
 
 
 class ActionType(DjangoChoices):
-    GENERAL_ERROR = ChoiceItem("general_error")
-    STARTED_TASK = ChoiceItem("started_task")
-    FORM_ERROR = ChoiceItem("form_error")
-    PROGRESS_UPDATE = ChoiceItem("progress_update")
-    REPLY_CHANNEL = ChoiceItem("reply_channel")
-    MESSAGE = ChoiceItem("message")
+    GENERAL_ERROR = ChoiceItem()
+    STARTED_TASK = ChoiceItem()
+    FORM_ERROR = ChoiceItem()
+    PROGRESS_UPDATE = ChoiceItem()
+    MESSAGE = ChoiceItem()
+    LIST = ChoiceItem()
+    SUB_ITEM = ChoiceItem()
+    SUB_LIST = ChoiceItem()
 
 
 def get_live_maps():

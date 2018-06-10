@@ -3,18 +3,75 @@ $(document).ready(function () {
     // Web socket stuff
     const ws = new channels.WebSocketBridge();
     ws.connect('/ws/uploader');
+    let log = $(".ui.bulleted.list");
+
+
+    function add_log_message(message) {
+        log.append('<div class="item">' + message + '</div>')
+    }
+
+    function add_log_list(node_id, message) {
+        let i = '<div class="item">'
+                + '<div>' + message + '</div>'
+                + '<div id="list_' + node_id + '" class="ui list"></div>'
+            + '</div>';
+        log.append(i)
+    }
+
+    function add_log_sub_item(node_id, message) {
+        let node = 'list_' + node_id;
+        let item = '<div class="item">' + message + '</div>';
+
+        $("#" + node).append(item);
+    }
+
+    function add_log_sub_list(parent_id, node_id, message) {
+        let i = '<div class="item">'
+                + '<div>' + message + '</div>'
+                + '<div id="list_' + node_id + '" class="ui list"></div>'
+            + '</div>';
+        let parent_node = 'list_' + parent_id;
+
+        $("#" + parent_node).append(i);
+    }
 
     ws.socket.addEventListener('open', function (event) {
-        $(".form").removeClass("loading")
-        $(".ui.bulleted.list").append('<div class="item">Connected to uploader backend</div>');
+        $(".form").removeClass("loading");
+        add_log_message('Connected to uploader backend');
     });
 
     ws.socket.addEventListener('close', function (evemt) {
-        $(".form").addClass("loading")
+        $(".form").addClass("loading");
+        // add_log_item('Disconnected from uploader backend');
     });
 
-    ws.socket.addEventListener('message', function (event) {
-       console.log(event);
+    ws.socket.addEventListener('message', function (message) {
+        console.log(message);
+        let packet = JSON.parse(message.data);
+        switch (packet.action) {
+            case "STARTED TASK":
+                add_log_message('Upload task started');
+                break;
+            case "GENERAL ERROR":
+                add_log_message(packet.error);
+                break;
+            case "PROGRESS UPDATE":
+                $("#pbMain").progress('set progress', packet.progress);
+                break;
+            case "MESSAGE":
+                add_log_message(packet.message);
+                break;
+            case "LIST":
+                add_log_list(packet.id, packet.message);
+                break;
+            case "SUB ITEM":
+                add_log_sub_item(packet.id, packet.message);
+                break;
+
+            case "SUB LIST":
+                add_log_sub_list(packet.parent, packet.id, packet.message);
+                break;
+        }
     });
 
 

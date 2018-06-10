@@ -10,3 +10,7 @@
 .shade {
     background-color: rgba(220, 209, 255, 0.2);
 }
+
+.outline {
+    border: 2px solid white;
+}
