@@ -4,6 +4,8 @@ $(document).ready(function () {
     const ws = new channels.WebSocketBridge();
     ws.connect('/ws/uploader');
     let log = $(".ui.bulleted.list");
+    let channel_name = "";
+    let map_insert_database = $("#id_database");
 
 
     function add_log_message(message) {
@@ -12,8 +14,8 @@ $(document).ready(function () {
 
     function add_log_list(node_id, message) {
         let i = '<div class="item">'
-                + '<div>' + message + '</div>'
-                + '<div id="list_' + node_id + '" class="ui list"></div>'
+            + '<div>' + message + '</div>'
+            + '<div id="list_' + node_id + '" class="ui list"></div>'
             + '</div>';
         log.append(i)
     }
@@ -27,8 +29,8 @@ $(document).ready(function () {
 
     function add_log_sub_list(parent_id, node_id, message) {
         let i = '<div class="item">'
-                + '<div>' + message + '</div>'
-                + '<div id="list_' + node_id + '" class="ui list"></div>'
+            + '<div>' + message + '</div>'
+            + '<div id="list_' + node_id + '" class="ui list"></div>'
             + '</div>';
         let parent_node = 'list_' + parent_id;
 
@@ -48,7 +50,7 @@ $(document).ready(function () {
     ws.socket.addEventListener('message', function (message) {
         console.log(message);
         let packet = JSON.parse(message.data);
-        switch (packet.action) {
+        switch (packet.action) { // Possibly make this switch statement better with an enum of sorts
             case "STARTED TASK":
                 add_log_message('Upload task started');
                 break;
@@ -67,9 +69,11 @@ $(document).ready(function () {
             case "SUB ITEM":
                 add_log_sub_item(packet.id, packet.message);
                 break;
-
             case "SUB LIST":
                 add_log_sub_list(packet.parent, packet.id, packet.message);
+                break;
+            case "CHANNEL NAME":
+                channel_name = packet.channel;
                 break;
         }
     });
@@ -87,6 +91,7 @@ $(document).ready(function () {
         $("#map_info :input").attr("disabled", !this.checked);
 
         map_type.parent().toggleClass("disabled", !this.checked);
+        map_insert_database.parent().toggleClass("disabled", !this.checked);
 
     });
 
@@ -115,7 +120,15 @@ $(document).ready(function () {
             fd.append(input.name, input.value);
         });
 
+        // Replace the fancy checkboxes value since it doesnt get set properly above.
+        fd.set("insert_map_info", $("#id_insert_map_info").prop('checked'));
+        fd.set("map_disable_pre_hop", $("#id_map_disable_pre_hop").prop('checked'));
+        fd.set("map_enable_baked_triggers", $("#id_map_enable_baked_triggers").prop('checked'));
+
+
+        fd.append("database", $("#id_database").val());
         fd.append("map_file", $("#id_map_file")[0].files[0]);
+        fd.append("channel_name", channel_name);
 
         $.ajax({
             xhr: function () {
@@ -145,6 +158,19 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
 
+                if (response.error === true) {
+                    let errors = response.errors;
+
+                    let list = '<ul class="list">';
+                    for (let key in errors) {
+                        if (errors.hasOwnProperty(key)) {
+                            list += '<li>' + errors[key] + '</li>'
+                        }
+                    }
+                    list += '</ul>';
+
+                    $(".ui.inverted.error.message").html(list).show();
+                }
             }
         });
     }
@@ -160,6 +186,13 @@ $(document).ready(function () {
                         },
                         {
                             type: 'maxLength[32]'
+                        }
+                    ]
+                },
+                database: {
+                    rules: [
+                        {
+                            type: 'empty'
                         }
                     ]
                 },

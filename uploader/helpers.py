@@ -7,11 +7,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import uuid
 
-# Links up a user ID to a channel name
-USER_CHANNEL_NAME = {
-
-}
-
 
 def handle_uploaded_file(f):
     path = os.path.join(tempfile.gettempdir(), f.name)
@@ -21,23 +16,12 @@ def handle_uploaded_file(f):
     return path
 
 
-def websocket_response(action, data=None):
-    t = {
-        "action": action,
-        "type": "send_message"
-    }
-    if data is not None:
-        t.update(data)
-
-    return t
-
-
 def compress(file_path, callback):
     total_size = os.path.getsize(file_path)
     compressed_path = f"{file_path}.bz2"
 
     with open(file_path, 'rb') as uncompressed_file, bz2.BZ2File(compressed_path, 'wb') as compressed_file:
-        for data in iter(lambda: uncompressed_file.read(1000 * 1024), b''):
+        for data in iter(lambda: uncompressed_file.read(3 * 1000 * 1024), b''):
             compressed_file.write(data)
             percent_complete = round((uncompressed_file.tell() / total_size) * 100)
 

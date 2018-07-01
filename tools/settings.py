@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'storages',
     'channels',
     'account',
     'home',
@@ -85,8 +87,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'surf': {
     }
 }
+surf_db_from_env = dj_database_url.config(env='SURF_DATABASE_URL', conn_max_age=500)
+DATABASES['surf'].update(surf_db_from_env)
+print(DATABASES)
 
 
 # Password validation
@@ -133,7 +140,7 @@ STATICFILES_DIRS = (
 
 AUTH_USER_MODEL = 'account.User'
 
-LOGIN_URL = '/'
+LOGIN_URL = '/account/login/'
 
 LIVE_MAP_URLS = ['https://files.resurfed.com/maplists/elite.txt', 'https://files.resurfed.com/maplists/bhop.txt']
 
@@ -149,3 +156,16 @@ CHANNEL_LAYERS = {
 }
 
 CELERY_BROKER_URL = "redis://tools-dev:6ff5c092593fad69a5d8b505e55be2dad42e972955e7ba4ddf3d40832844e4de@apps.resurfed.xyz:31355"
+
+MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
+
+if not DEBUG:
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_BUCKET")
+    AWS_S3_REGION_NAME = os.environ.get("AWS_REGION")
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
+
+    # Tell django-storages the domain to use to refer to static files.
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

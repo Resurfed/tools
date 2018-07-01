@@ -33,9 +33,15 @@ class ActionType(DjangoChoices):
     FORM_ERROR = ChoiceItem()
     PROGRESS_UPDATE = ChoiceItem()
     MESSAGE = ChoiceItem()
+    CHANNEL_NAME = ChoiceItem()
     LIST = ChoiceItem()
     SUB_ITEM = ChoiceItem()
     SUB_LIST = ChoiceItem()
+
+
+class DatabaseType(DjangoChoices):
+    Public = ChoiceItem()
+    Private = ChoiceItem()
 
 
 def get_live_maps():

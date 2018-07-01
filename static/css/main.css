@@ -64,7 +64,7 @@ body > .middle.grid {
     background-color: #222;
 }
 
-.loading {
+.black {
     color: black;
 }
 
@@ -79,4 +79,14 @@ body > .middle.grid {
 
 .ui.transparent.inverted.input > input:focus {
     opacity: 0.8;
+}
+
+.ui.menu .dropdown.item:hover{
+    color: white;
+}
+
+.centerit {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
 }

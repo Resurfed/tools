@@ -1,22 +1,10 @@
-import json
-
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse
 from .forms import RegisterForm, LoginForm, SendResetPasswordForm, ResetPasswordForm
 from .models import User, ResetPasswordToken
 from .responses import ajax_response
+from django.conf import settings
 import requests
-
-# Create your views here.
-'''
-
-/', views.login_user, name=
-ter/', views.register_user,
-t/', views.logout_user, nam
-, views.user_profile, name=
-
-'''
 
 
 def login_user(request):
@@ -55,7 +43,8 @@ def login_user(request):
             return ajax_response(False, 400, errors=errors)
 
     return render(request, 'account/login.html', {
-        'form': LoginForm()
+        'form': LoginForm(),
+        'next': request.GET.get('next')
     })
 
 
@@ -114,7 +103,7 @@ def forget_password(request):
             reset.user = user
             reset.save()
 
-            key = 'PUT KEY HERE'
+            key = settings.MAILGUN_API_KEY
             request_url = 'https://api.mailgun.net/v3/mail.resurfed.com/messages'
             reset_link = f"http://tools.resurfed.xyz/account/reset/{reset.token}/"
 
@@ -156,9 +145,9 @@ def reset_password(request, token=None):
             if reset.is_expired():
                 return ajax_response(False, 401, errors=['Expired reset token'])
 
-            reset.delete()
             reset.user.set_password(password)
             reset.user.save()
+            reset.delete()
 
             return ajax_response(True)
 

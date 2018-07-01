@@ -1,5 +1,6 @@
 from channels.generic.websocket import JsonWebsocketConsumer
-from .helpers import USER_CHANNEL_NAME
+from .helpers import MessageHandler
+from .choices import ActionType
 import json
 
 
@@ -12,10 +13,9 @@ class UploadConsumer(JsonWebsocketConsumer):
     def connect(self):
         self.accept()
         self.user = self.scope['user']
-        USER_CHANNEL_NAME.update({self.user.id: self.channel_name})
+        self.send_message(MessageHandler.format_packet(ActionType.CHANNEL_NAME, {"channel": self.channel_name}))
 
     def disconnect(self, close_code):
-        USER_CHANNEL_NAME.pop(self.user.id)
         pass
 
     def receive_json(self, content, **kwargs):

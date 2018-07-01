@@ -1,8 +1,8 @@
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Server
-from .choices import MapTypeChoices
+from .models import Server, Database
+from .choices import MapTypeChoices, ServerType, DatabaseType
 
 
 class UploadForm(forms.Form):
@@ -11,6 +11,17 @@ class UploadForm(forms.Form):
         initial=False,
         help_text="Insert map info on upload",
         required=False
+    )
+
+    database = forms.ModelChoiceField(
+        queryset=Database.objects.none(),
+        required=False,
+        help_text="Server to add the map to",
+        widget=forms.Select(
+            attrs={
+                'disabled': True,
+            }
+        )
     )
 
     map_author = forms.CharField(
@@ -99,26 +110,6 @@ class UploadForm(forms.Form):
         help_text="Enabled baked in triggers"
     )
 
-    map_spawns = forms.CharField(
-        required=False,
-        help_text=mark_safe("Format: type:zone:pos:ang <br/>"
-                            "types - map, stage, bonus <br/>"
-                            "zone - use the matching stage or bonus number <br/>"
-                            "pos - the pos coordinates from getpos (No decimals)<br/>"
-                            "ang - the ang coordinates from getang (No decimals)<br/>"
-                            "Note: For the map spawn leave the zone parameter empty! <br/>"),
-        widget=forms.Textarea(
-            attrs={
-                'placeholder': mark_safe('stage:1:100,200,300:0,90,0\n'
-                                         'bonus:5:100,200,300:0,90,0\n'
-                                         'map::100,200,300:0,90,0'),
-                'class': '',
-                'tabindex': 9,
-                'disabled': True
-            }
-        )
-    )
-
     servers = forms.ModelMultipleChoiceField(
         queryset=Server.objects.none(),
         required=False,
@@ -134,4 +125,15 @@ class UploadForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['servers'].queryset = Server.objects.all()
+        servers = Server.objects
+        databases = Database.objects
+
+        if user.has_perm('uploader.uploader_admin'):
+            servers = servers.all()
+            databases = databases.all()
+        else:
+            servers = servers.filter(type__in=[ServerType.SERVER_PUBLIC]).all()
+            databases = databases.filter(type__in=[DatabaseType.Public]).all()
+
+        self.fields['servers'].queryset = servers
+        self.fields['database'].queryset = databases

@@ -20,7 +20,7 @@ $(document).ready(function () {
         if (value.length === 0)
             return true;
 
-        let pattern = /^(map::-?\d+,-?\d+,-?\d+:-?\d+,-?\d+,-?\d+|(stage|bonus):([1-9]\d*):-?\d+,-?\d+,-?\d+:-?\d+,-?\d+,-?\d+)$/;
+        let pattern = /^(stage|bonus):([1-9]\d*):-?\d+,-?\d+,-?\d+:-?\d+,-?\d+,-?\d+)$/;
         let lines = value.split("\n");
         let ret_value = true;
 

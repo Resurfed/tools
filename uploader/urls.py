@@ -6,7 +6,8 @@ from . import consumers
 app_name = "uploader"
 urlpatterns = [
 
-    url(r'^', views.uploader, name='uploader'),
+    url(r'^$', views.uploader, name='uploader'),
+    url(r'^disabled/$', views.disabled, name='disabled')
 ]
 
 websocket_urlpatterns = [
