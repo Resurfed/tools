@@ -21,10 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_jqbv4^b8nb9hws8=0cd=1)%dg99wiirrcvvmzflf&l8@v_z^@'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", False)
+print("Debug:" + DEBUG)
 
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
@@ -88,12 +89,27 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'surf': {
+    'surf_live': {
+    },
+    'bhop_live': {
+    },
+    'surf_test': {
+    },
+    'bhop_test': {
     }
 }
+
 surf_db_from_env = dj_database_url.config(env='SURF_DATABASE_URL', conn_max_age=500)
-DATABASES['surf'].update(surf_db_from_env)
-print(DATABASES)
+DATABASES['surf_live'].update(surf_db_from_env)
+
+surf_db_from_env = dj_database_url.config(env='BHOP_DATABASE_URL', conn_max_age=500)
+DATABASES['bhop_live'].update(surf_db_from_env)
+
+surf_db_from_env = dj_database_url.config(env='SURF_TEST_DATABASE_URL', conn_max_age=500)
+DATABASES['surf_test'].update(surf_db_from_env)
+
+surf_db_from_env = dj_database_url.config(env='BHOP_TEST_DATABASE_URL', conn_max_age=500)
+DATABASES['bhop_test'].update(surf_db_from_env)
 
 
 # Password validation
@@ -150,12 +166,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": ["redis://tools-dev:6ff5c092593fad69a5d8b505e55be2dad42e972955e7ba4ddf3d40832844e4de@apps.resurfed.xyz:31355"],
+            "hosts": [os.environ.get("REDIS_URL")],
         },
     },
 }
 
-CELERY_BROKER_URL = "redis://tools-dev:6ff5c092593fad69a5d8b505e55be2dad42e972955e7ba4ddf3d40832844e4de@apps.resurfed.xyz:31355"
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
 
