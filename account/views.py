@@ -108,10 +108,10 @@ def forget_password(request):
             reset_link = f"http://tools.resurfed.xyz/account/reset/{reset.token}/"
 
             request = requests.post(request_url, auth=('api', key), data={
-                'from': 'mail.resurfed.com',
+                'from': 'ReSurfed Tools <donotreply@mail.resurfed.com>',
                 'to': email,
                 'subject': 'ReSurfed tools password reset',
-                'text': f"You somehow forgot your own password. Click <a href='{reset_link}'>Here</a> to reset it."
+                'html': f"You somehow forgot your own password. Click <a href='{reset_link}'>Here</a> to reset it."
             })
 
             if request.status_code != 200:

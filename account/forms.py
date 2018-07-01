@@ -150,7 +150,7 @@ class SendResetPasswordForm(forms.Form):
         user_name = self.cleaned_data.get('user_name')
 
         if not User.objects.filter(email=email, username=user_name).exists():
-            self.add_error('username', "Could not find an account matching this username and email.")
+            self.add_error('user_name', "Could not find an account matching this username and email combination.")
 
         return self.cleaned_data
 
